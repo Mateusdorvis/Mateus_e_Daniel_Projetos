@@ -1,37 +1,33 @@
 import tkinter as tk
-from controller.main_c import MainController
 
-class SampleApp(tk.Tk):
+from model.usuario_m import UsuarioModel
+
+
+class MainApp(tk.Tk):
     def __init__(self):
-        tk.Tk.__init__(self)
-        self.title("Jogo")
-        self.geometry("300x300")
-        self._frame = None
-        self.switch_frame(Main)
-
+        super().__init__()
+        self.title("adicionar usuário")
+        self.geometry("400x300")
+        MenuView(self).pack(fill=tk.BOTH, expand=True)
+        self.switch_frame(UsuarioView)
+   
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
-        if self._frame is not None:
-            self._frame.destroy()
-        self._frame = new_frame
-        self._frame.pack()
+        if frame_class ==  UsuarioView:
+            model =  UsuarioModel()
+            UsuarioController(new_frame,model)
+        elif frame_class == DeleteView:
+            model =  UsuarioModel()
+            DeleteController(new_frame, model)
+        elif frame_class == AtualizaView:
+            model =  UsuarioModel()
+            AtualizaController(new_frame, model)
 
-
-class Main(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        tk.Label(self, text="Aplicativo de Jogos", font=("Helvetica", 18, "bold")).pack(
-            anchor="center",fill="x"
-        )
-        tk.Button(
-            self, text="Login", command=lambda: master.switch_frame(MainController.login)
-        ).pack()
-        tk.Button(
-            self, text="Permanecer desconectado", command=lambda: master.switch_frame(SemLogin)
-        ).pack()
-
+        if hasattr(self, "current_frame"):
+            self.current_frame.destroy()
+        self.current_frame = new_frame
+        self.current_frame.pack(fill=tk.BOTH, expand=True)
 
 if __name__ == "__main__":
-    app = SampleApp()
+    app = MainApp()
     app.mainloop()
-
