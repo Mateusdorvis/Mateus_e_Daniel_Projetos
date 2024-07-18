@@ -22,7 +22,7 @@ class MenuView(tk.Frame):
         return menu_dropdown
 
     def create_widgets(self):
-        mb = tk.Menubutton(self, text="Menu", relief=tk.RAISED)
+        mb = tk.Menubutton(self, text="Menu", relief=tk.RAISED,background="#88b499")
         mb.menu = self.criar_menu_dropdown(mb)
         mb["menu"] = mb.menu
-        mb.pack(anchor="center", pady=12, padx=12)
+        mb.pack(anchor="nw", pady=12, padx=12)

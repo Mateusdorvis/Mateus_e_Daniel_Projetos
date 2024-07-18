@@ -20,13 +20,21 @@ class UsuarioModel:
     def create_table(self):
         cursor = self.conn.cursor()
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS usuarios (
+            CREATE TABLE IF NOT EXISTS jogos (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 nome VARCHAR(100) NOT NULL,
-                idade INT
+                senha INT
             )
         ''')
         self.conn.commit()
+
+    def authenticate(self, nome, senha):
+        with self.conn.cursor() as cursor:
+            cursor.execute('SELECT * FROM usuarios WHERE nome = ? AND senha = ?', (nome, senha))
+            user = cursor.fetchone()
+            return user is not None
+    
+    
 
     def inserir_usuario(self, nome, idade):
         cursor = self.conn.cursor()

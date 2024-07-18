@@ -11,18 +11,20 @@ class MainApp(tk.Tk):
         self.title("Aplicativo de Jogos")
         self.geometry("400x400")
         MenuView(self).pack(fill=tk.BOTH, expand=True)
-        self.switch_frame(TelaInicialView)
+        self.switch_frame(LoginView)
         
    
     
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
-        if frame_class ==  TelaInicialView:
-            model =  UsuarioModel()
-            TelaInicialController(new_frame,model)
-        elif frame_class == LoginView:
+
+        if frame_class == LoginView:
             model =  UsuarioModel()
             LoginController(new_frame, model)
+        elif frame_class ==  TelaInicialView:
+            model =  UsuarioModel()
+            TelaInicialController(new_frame,model)
+        
 
 
         if hasattr(self, "current_frame"):
