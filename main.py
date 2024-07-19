@@ -1,3 +1,4 @@
+'''
 import tkinter as tk
 from view.menu_v import MenuView
 from view.tela_inicial_v import TelaInicialView
@@ -14,6 +15,7 @@ class MainApp(tk.Tk):
         super().__init__()
         self.title("Aplicativo de Jogos")
         self.geometry("400x400")
+        self.resizable(False,False)
         MenuView(self).pack(fill=tk.BOTH, expand=True)
         self.switch_frame(LoginView)
         
@@ -47,6 +49,7 @@ class MainApp(tk.Tk):
 if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
+'''
 
 
 
@@ -54,7 +57,18 @@ if __name__ == "__main__":
 
 
 
+import tkinter as tk
+from view.tela_principal_v import TelaPrincipalView
 
+def main():
+    root = tk.Tk()
+    root.title("Aplicativo de Jogos com Scroll")
+    root.geometry("600x400")  # Ajuste o tamanho da janela conforme necessário
 
+    app = TelaPrincipalView(root)
+    app.pack(fill=tk.BOTH, expand=True)
 
+    root.mainloop()
 
+if __name__ == "__main__":
+    main()

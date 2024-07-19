@@ -8,11 +8,15 @@ class LoginController:
         self.view = view
         self.model = model
         self.view.login_button.config(command=self.login)
+        self.view.novaconta_button.config(command=self.ir_para_criar_conta)
         
     def login(self):
         usuario = self.view.usuario_entry.get()
         senha = self.view.senha_entry.get()
         self.verifica_login(usuario, senha)
+    
+    def ir_para_criar_conta(self):
+        pass
     
     def verifica_login(self, usuario, senha):
         if self.model.verifica_senha(usuario, senha):
