@@ -11,9 +11,9 @@ root.resizable(False, False)
 
 favorito_window = None
 login_window = None
+info_window = None
 
 def load_images():
-    # Carrega e redimensiona as imagens
     image1 = Image.open("mario.jpg").resize((120, 120))
     photo1 = ImageTk.PhotoImage(image1)
 
@@ -64,81 +64,64 @@ def load_images():
 
 image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14, image15 = load_images()
 
-import tkinter as tk
-from tkinter import messagebox
-
-# Variável global para manter a referência da janela de login
-login_window = None
-
 def abrir_janela_login():
     global login_window
     
-    # Verifica se a janela de login já foi criada
     if login_window and login_window.winfo_exists():
-        # Se a janela já estiver aberta, apenas a traz para o topo
+        
         login_window.lift()
         login_window.focus()
         return
 
-    # Cria uma nova janela
     login_window = tk.Toplevel(root)
     login_window.title("Login")
     login_window.geometry("290x200")
     login_window.resizable(False, False)
 
-    # Cria um frame para organizar os widgets com grid
     frame_login = tk.Frame(login_window, background="#789048")
     frame_login.pack(fill="both", expand=True)
 
-    # Título da janela de login
     login_titulo = tk.Label(frame_login, text="Login", font=("Arial Black", 12), background="#f0f0d8")
     login_titulo.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 20), sticky="n")
 
-    # Rótulo e campo para nome de usuário
     label_nome = tk.Label(frame_login, text="Nome de Usuário:", font=("Arial Black", 8), background="#f0f0d8")
     label_nome.grid(row=1, column=0, padx=10, pady=10, sticky="e")
 
     entry_nome = tk.Entry(frame_login)
     entry_nome.grid(row=1, column=1, padx=10, pady=10, sticky="w")
 
-    # Rótulo e campo para senha
-    label_senha = tk.Label(frame_login, text="Senha:",font=("Arial Black", 8), background="#f0f0d8")
+    label_senha = tk.Label(frame_login, text="Senha:", font=("Arial Black", 8), background="#f0f0d8")
     label_senha.grid(row=2, column=0, padx=10, pady=10, sticky="e")
 
-    entry_senha = tk.Entry(frame_login)
+    entry_senha = tk.Entry(frame_login)  
     entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
-    # Função para o botão de login
     def login():
         usuario = entry_nome.get()
         senha = entry_senha.get()
-        # Aqui você pode adicionar lógica para autenticação
-        # Por enquanto, só exibe uma mensagem de sucesso
         messagebox.showinfo("Login", f"Usuário: {usuario}\nSenha: {senha}")
         login_window.destroy()
 
-
-    # Botões para login e cancelar
     login_button = tk.Button(frame_login, text="Login", background="#f0f0d8",command=login)
     login_button.grid(row=3, column=0, columnspan=2, padx=10, pady=(10, 20), sticky="n")
-
 
 def abrir_janela_favoritos():
     global favorito_window
     
+    # Verifica se a janela 'favorito_window' existe e está visível
     if favorito_window and favorito_window.winfo_exists():
-        
         favorito_window.lift()
         favorito_window.focus()
         return
 
+    # Cria a janela 'favorito_window' se não existir
     favorito_window = tk.Toplevel(root)
     favorito_window.title("Favoritos")
     favorito_window.geometry("300x300")
     favorito_window.resizable(False, False)
 
     frame_favorito = tk.Frame(favorito_window, background="#789048")
-    frame_favorito.pack(fill="both",expand="yes")
+    frame_favorito.pack(fill="both", expand=True)
 
     favorito_label = tk.Label(frame_favorito, text="Jogos no Favorito", font=("Arial Black", 9), background="#f0f0d8")
     favorito_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
@@ -157,15 +140,54 @@ def abrir_janela_favoritos():
     frame_favorito2.grid_rowconfigure(0, weight=1)
     frame_favorito2.grid_columnconfigure(0, weight=1)
 
+def abrir_janela_info():
+    global info_window
+    
+    # Verifica se a janela 'info_window' existe e está visível
+    if info_window and info_window.winfo_exists():
+        info_window.lift()
+        info_window.focus()
+        return
 
+    # Cria a janela 'info_window' se não existir
+    info_window = tk.Toplevel(root)
+    info_window.title("Info")
+    info_window.geometry("300x300")
+    info_window.resizable(False, False)
 
-# Cria o Frame principal
-frame = tk.Frame(root, background="lightgrey")
+    info_frame = tk.Frame(info_window)
+    info_frame.pack(fill="both", expand=True)
+
+    info_label = tk.Label(info_frame, text="Informações da Tela", font=("Arial Black", 15))
+    info_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
+
+    info_label2 = tk.Label(info_frame, text="Tela <F11> Preenche a Tela \n    <ESC> Diminui a Tela", font=("Arial Black", 10))
+    info_label2.grid(row=1, column=0, padx=10, pady=(10, 5), sticky="nw")
+
+    info_button = tk.Button(info_frame, text="Voltar", font=("Arial Black", 15), background="#cdcfb7", command=info_window.destroy)
+    info_button.grid(row=2, column=0, padx=10, pady=(10, 5), sticky="n")
+
+    info_frame.grid_rowconfigure(1, weight=1)
+    info_frame.grid_columnconfigure(0, weight=1)
+
+frame = tk.Frame(root)
 frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-canvas = tk.Canvas(frame, background="#607848")
+# Cria o Frame secundário
+frame_secundario = tk.Frame(frame, background="#789048")
+frame_secundario.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+
+# Cria o Canvas dentro do frame_secundario
+canvas = tk.Canvas(frame_secundario, background="#607848")
 canvas.grid(row=0, column=0, sticky="nsew")
 
+# Configura o layout do grid interno para frame_secundario
+frame_secundario.grid_rowconfigure(0, weight=1)
+frame_secundario.grid_columnconfigure(0, weight=1)
+
+# Configura o layout do grid interno para o canvas
+canvas.grid_rowconfigure(0, weight=1)
+canvas.grid_columnconfigure(0, weight=1)
 # Scrolls
 scroll_x = tk.Scrollbar(frame, orient="horizontal", command=canvas.xview)
 scroll_x.grid(row=1, column=0, sticky="ew")
@@ -212,8 +234,7 @@ menubar = tk.Menu(root)
 root.config(menu=menubar)
 
 menu = tk.Menu(menubar, tearoff=0)
-menu.add_command(label="Ativar Tela Cheia", command=lambda: tela_cheia)
-menu.add_command(label="Desativar Tela Cheia", command=lambda: desativ_tela_cheia)
+menu.add_command(label="Tela", command=lambda: abrir_janela_info())
 
 conta = tk.Menu(menubar, tearoff=0)
 
@@ -224,13 +245,28 @@ menu.add_command(label="Sair", command=root.destroy)
 menubar.add_cascade(label="Configurações", menu=menu)
 menubar.add_cascade(label="Conta", menu=conta)
 
+def restart():
+    root.destroy()
+    root = tk.Tk()
+    setup()
 
 def tela_cheia(event):
-    root.attributes("-fullscreen", True)
-    messagebox.showinfo("Informação", "A opção de Tela é Tela Cheia.")
+    root.geometry("700x700")
+    messagebox.showinfo("Informação", "A Tela foi preenchida.")
+    restart()
+
 def desativ_tela_cheia(event):
-    root.attributes("-fullscreen", False)
-    messagebox.showinfo("Informação", "A opção de Tela é Default.")
+    root.geometry("500x500")
+    messagebox.showinfo("Informação", "A Tela foi diminuida.")
+    restart()
+
+def setup():
+    """Configura a aplicação e os eventos."""
+    root.bind("<F11>", tela_cheia)
+    root.bind("<Escape>", desativ_tela_cheia)
+
+# Configura a aplicação inicial
+setup()
 
 
 # Frame para os jogos em destaque
