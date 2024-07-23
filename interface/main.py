@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import Tk
 from PIL import Image, ImageTk
+from datetime import datetime
 
 root = tk.Tk()
 root.title("Aplicativo de Jogos")
@@ -60,6 +61,61 @@ def load_images():
 
 image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14, image15 = load_images()
 
+def abrir_janela_login():
+    # Cria uma nova janela
+    login_window = tk.Toplevel(root)
+    login_window.title("Login")
+    login_window.geometry("300x300")
+    login_window.resizable(False, False)
+
+    # Adiciona labels e campos com grid
+    tk.Label(login_window, text="Nome de Usuário:").grid(row=0, column=0, padx=10, pady=10, sticky="e")
+    entry_username = tk.Entry(login_window)
+    entry_username.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+
+    tk.Label(login_window, text="Senha:").grid(row=1, column=0, padx=10, pady=10, sticky="e")
+    entry_password = tk.Entry(login_window, show="")
+    entry_password.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+
+    # Adiciona botões com grid
+    def login():
+        username = entry_username.get()
+        password = entry_password.get()
+        # Aqui você pode adicionar lógica para autenticação
+        # Por enquanto, só exibe uma mensagem de sucesso
+        messagebox.showinfo("Login", f"Usuário: {username}\nSenha: {password}")
+        login_window.destroy()
+
+    def cancelar():
+        login_window.destroy()
+
+    tk.Button(login_window, text="Login", command=login).grid(row=2, column=1, padx=10, pady=20, sticky="s")
+
+def abrir_janela_favoritos():
+
+    favorito_window = tk.Toplevel(root)
+    favorito_window.title("Favoritos")
+    favorito_window.geometry("300x300")
+    favorito_window.resizable(False, False)
+
+
+    favorito_window.grid_rowconfigure(0, weight=1)
+    favorito_window.grid_rowconfigure(1, weight=1)
+    favorito_window.grid_columnconfigure(0, weight=1)
+    favorito_window.grid_columnconfigure(1, weight=1)
+
+    # widgets
+    frame_favorito = tk.Frame(favorito_window,background="#789048")
+    frame_favorito.pack(expand=True,fill="both")
+    favorito_label = tk.Label(frame_favorito, text="Jogos no Favorito", font=("Arial Black", 9), background="#f0f0d8")
+    favorito_label.grid(row=0, column=0, columnspan=1, pady=(10, 10), sticky="n")
+
+    # Rótulo do horário
+    
+    # Exibe a janela
+    favorito_window.mainloop()
+
+
 # Cria o Frame principal
 frame = tk.Frame(root, background="lightgrey")
 frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
@@ -80,6 +136,32 @@ frame_principal.bind("<Configure>", lambda e: canvas.configure(scrollregion=canv
 nome_app_label = tk.Label(frame_principal, text="Aplicativo de Jogos", font=("Arial Black", 16), background="#f0f0d8")
 nome_app_label.grid(row=0, column=0, columnspan=5, pady=(10, 5), sticky="n")
 
+
+
+time_label = tk.Label(frame_principal, font=("Arial", 10),background="#607848")
+time_label.grid(row=0, column=4, padx=10, pady=10, sticky="e")
+
+time_label = tk.Label(frame_principal, font=("Arial", 10), background="#607848", foreground="white")
+time_label.grid(row=0, column=4, padx=10, pady=10, sticky="e")
+
+def update_time():
+    # Obtém o horário atual
+    now = datetime.now()
+    
+    # Formata o horário e a data
+    current_time = now.strftime("%H:%M:%S")
+    current_date = now.strftime("%A, %d %B %Y")  # Exemplo: "Sunday, 23 July 2024"
+    
+    # Atualiza o rótulo com a data e o horário
+    time_label.config(text=f"{current_date}\n{current_time}")
+
+    # Atualiza o horário a cada 1000 ms (1 segundo)
+    root.after(1000, update_time)
+
+# Inicia a atualização do horário
+update_time()
+
+
 canvas.create_window((0, 0), window=frame_principal, anchor="nw")
 canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
@@ -94,12 +176,11 @@ root.config(menu=menubar)
 menu = tk.Menu(menubar, tearoff=0)
 menu.add_command(label="Ativar Tela Cheia", command=lambda: tela_cheia)
 menu.add_command(label="Desativar Tela Cheia", command=lambda: desativ_tela_cheia)
-menu.add_command(label="Ver Horário", command=lambda: desativ_tela_cheia)
 
 conta = tk.Menu(menubar, tearoff=0)
 
-conta.add_command(label="Favoritos", command=lambda: desativ_tela_cheia)
-conta.add_command(label="Login", command=lambda: login)
+conta.add_command(label="Favoritos", command=lambda: abrir_janela_favoritos())
+conta.add_command(label="Login", command=lambda: abrir_janela_login())
 
 menu.add_command(label="Sair", command=root.destroy)
 menubar.add_cascade(label="Configurações", menu=menu)
