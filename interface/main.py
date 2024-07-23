@@ -126,40 +126,38 @@ def abrir_janela_login():
 def abrir_janela_favoritos():
     global favorito_window
     
-    # Verifica se a janela de favoritos já foi criada
     if favorito_window and favorito_window.winfo_exists():
-        # Se a janela já estiver aberta, apenas a traz para o topo
+        
         favorito_window.lift()
         favorito_window.focus()
         return
 
-    # Cria uma nova janela se não existir uma janela de favoritos
     favorito_window = tk.Toplevel(root)
     favorito_window.title("Favoritos")
     favorito_window.geometry("300x300")
     favorito_window.resizable(False, False)
 
-    # Configura o grid principal da janela
-    favorito_window.grid_rowconfigure(0, weight=0)  # Linha 0 para o rótulo
-    favorito_window.grid_rowconfigure(1, weight=1)  # Linha 1 para o frame_favorito2
-    favorito_window.grid_columnconfigure(0, weight=1)
-    favorito_window.grid_columnconfigure(1, weight=1)
+    frame_favorito = tk.Frame(favorito_window, background="#789048")
+    frame_favorito.pack(fill="both",expand="yes")
 
-
-    frame_favorito = tk.Canvas(favorito_window, background="#789048")
-    frame_favorito.pack(expand="yes", fill="both")
-
-    # Cria o rótulo favorito_label
     favorito_label = tk.Label(frame_favorito, text="Jogos no Favorito", font=("Arial Black", 9), background="#f0f0d8")
     favorito_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
 
-    # Cria e configura o frame_favorito2
     frame_favorito2 = tk.Frame(frame_favorito, background="#607848")
-    frame_favorito2.grid(row=1, column=0, rowspan=3, padx=10, pady=10, sticky="nsew")
+    frame_favorito2.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-    # Configura o layout interno do frame_favorito para que o frame_favorito2 expanda
+    listbox_favorito = tk.Listbox(frame_favorito2, background="#f0f0d8")
+    listbox_favorito.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+    for item in ["Jogo 1", "Jogo 2", "Jogo 3"]:
+        listbox_favorito.insert(tk.END, item)
+
     frame_favorito.grid_rowconfigure(1, weight=1)
     frame_favorito.grid_columnconfigure(0, weight=1)
+    frame_favorito2.grid_rowconfigure(0, weight=1)
+    frame_favorito2.grid_columnconfigure(0, weight=1)
+
+
 
 # Cria o Frame principal
 frame = tk.Frame(root, background="lightgrey")
@@ -240,7 +238,7 @@ frame_destaques = tk.Frame(frame_principal, background="#789048")
 frame_destaques.grid(row=1, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
 
 # Super Mario Bros.
-label1 = tk.Label(frame_destaques, text="Super Mario Bros.", image=image1, compound="top", font=("Arial", 10))
+label1 = tk.Label(frame_destaques, text="Super Mario World", image=image1, compound="top", font=("Arial", 10))
 label1.grid(row=0, column=0, padx=5, pady=5)
 
 button_favoritos1 = tk.Button(frame_destaques, text="Adicionar aos Favoritos", font=("Arial", 7),background="#f0f0d8")
@@ -308,7 +306,7 @@ button_download5 = tk.Button(frame_plataforma, text="Download", font=("Arial", 7
 button_download5.grid(row=2, column=0, padx=5, pady=5)
 
 # Donkey Kong
-label6 = tk.Label(frame_plataforma, text="Donkey Kong", image=image6, compound="top", font=("Arial", 10))
+label6 = tk.Label(frame_plataforma, text="Donkey Kong Country", image=image6, compound="top", font=("Arial", 10))
 label6.grid(row=0, column=1, padx=5, pady=5)
 
 button_favoritos6 = tk.Button(frame_plataforma, text="Adicionar aos Favoritos", font=("Arial", 7),background="#f0f0d8")
@@ -356,7 +354,7 @@ frame_fps = tk.Frame(frame_principal, background="#789048")
 frame_fps.grid(row=5, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
 
 # ARK
-label11 = tk.Label(frame_fps, text="ARK", image=image11, compound="top", font=("Arial", 10))
+label11 = tk.Label(frame_fps, text="ARK: Survival Ascendent", image=image11, compound="top", font=("Arial", 10))
 label11.grid(row=0, column=0, padx=5, pady=5)
 
 button_favoritos11 = tk.Button(frame_fps, text="Adicionar aos Favoritos", font=("Arial", 7),background="#f0f0d8")
