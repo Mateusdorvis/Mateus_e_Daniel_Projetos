@@ -11,7 +11,9 @@ root.resizable(False, False)
 favorito_window = None
 login_window = None
 info_window = None
-
+def sair():
+    if messagebox.askyesno("Sair", "Deseja realmente sair?"):
+        root.destroy()
 def load_images():
     image1 = Image.open("mario.jpg").resize((120, 120))
     photo1 = ImageTk.PhotoImage(image1)
@@ -662,4 +664,5 @@ frame.grid_columnconfigure(0, weight=1)
 
 # Executa o loop principal do tkinter
 if __name__ == "__main__":
+    root.protocol("WM_DELETE_WINDOW", sair)
     root.mainloop()
