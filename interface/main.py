@@ -11,9 +11,7 @@ root.resizable(False, False)
 favorito_window = None
 login_window = None
 info_window = None
-def sair():
-    if messagebox.askyesno("Sair", "Deseja realmente sair?"):
-        root.destroy()
+
 def load_images():
     image1 = Image.open("mario.jpg").resize((120, 120))
     photo1 = ImageTk.PhotoImage(image1)
@@ -617,46 +615,20 @@ button_download15.grid(row=2, column=4, padx=5, pady=5)
 button_download15.bind("<Enter>", entrada_do_mouse)
 button_download15.bind("<Leave>", saida_do_mouse)
 
-# Configura o layout do grid interno
-frame_destaques.grid_rowconfigure(0, weight=1)
-frame_destaques.grid_rowconfigure(1, weight=0)
-frame_destaques.grid_rowconfigure(2, weight=0)
-frame_destaques.grid_columnconfigure(0, weight=1)
-frame_destaques.grid_columnconfigure(1, weight=1)
-frame_destaques.grid_columnconfigure(2, weight=1)
-frame_destaques.grid_columnconfigure(3, weight=1)
-frame_destaques.grid_columnconfigure(4, weight=1)
+def configurar_grid(frame, rows, columns):
+    # Configura as linhas do grid
+    for i in range(rows):
+        frame.grid_rowconfigure(i, weight=1 if i == 0 or i == rows - 1 else 0)
+    
+    # Configura as colunas do grid
+    for j in range(columns):
+        frame.grid_columnconfigure(j, weight=1)
 
-frame_plataforma.grid_rowconfigure(0, weight=1)
-frame_plataforma.grid_rowconfigure(1, weight=0)
-frame_plataforma.grid_rowconfigure(2, weight=0)
-frame_plataforma.grid_columnconfigure(0, weight=1)
-frame_plataforma.grid_columnconfigure(1, weight=1)
-frame_plataforma.grid_columnconfigure(2, weight=1)
-frame_plataforma.grid_columnconfigure(3, weight=1)
-frame_plataforma.grid_columnconfigure(4, weight=1)
-
-frame_fps.grid_rowconfigure(0, weight=1)
-frame_fps.grid_rowconfigure(1, weight=0)
-frame_fps.grid_rowconfigure(2, weight=0)
-frame_fps.grid_columnconfigure(0, weight=1)
-frame_fps.grid_columnconfigure(1, weight=1)
-frame_fps.grid_columnconfigure(2, weight=1)
-frame_fps.grid_columnconfigure(3, weight=1)
-frame_fps.grid_columnconfigure(4, weight=1)
-
-# Configura o layout do Frame principal
-frame_principal.grid_rowconfigure(0, weight=1)
-frame_principal.grid_rowconfigure(1, weight=0)
-frame_principal.grid_rowconfigure(2, weight=0)
-frame_principal.grid_rowconfigure(3, weight=1)
-frame_principal.grid_rowconfigure(4, weight=0)
-frame_principal.grid_rowconfigure(5, weight=1)
-frame_principal.grid_columnconfigure(0, weight=1)
-frame_principal.grid_columnconfigure(1, weight=1)
-frame_principal.grid_columnconfigure(2, weight=1)
-frame_principal.grid_columnconfigure(3, weight=1)
-frame_principal.grid_columnconfigure(4, weight=1)
+# Exemplo de uso para os frames específicos mencionados
+configurar_grid(frame_destaques, 3, 5)
+configurar_grid(frame_plataforma, 3, 5)
+configurar_grid(frame_fps, 3, 5)
+configurar_grid(frame_principal, 6, 5)
 
 # Ajusta as proporções do Canvas e do Frame
 frame.grid_rowconfigure(0, weight=1)
@@ -664,5 +636,4 @@ frame.grid_columnconfigure(0, weight=1)
 
 # Executa o loop principal do tkinter
 if __name__ == "__main__":
-    root.protocol("WM_DELETE_WINDOW", sair)
     root.mainloop()
