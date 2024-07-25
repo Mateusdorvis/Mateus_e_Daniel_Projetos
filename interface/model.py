@@ -14,10 +14,10 @@ class UsuarioModel:
         except mariadb.Error as e:
             print(f"Erro de conexão ao MariaDB: {e}")
             sys.exit(1)
-       
-        self.create_table()
+        
+        self.create_tables()
 
-    def create_table_usuario(self):
+    def create_tables(self):
         cursor = self.conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS usuario (
@@ -27,54 +27,60 @@ class UsuarioModel:
                 senha VARCHAR(100)
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS favoritos (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                usuario_nome VARCHAR(100),
+                jogo_nome VARCHAR(100),
+                FOREIGN KEY (usuario_nome) REFERENCES usuario(nome)
+            )
+        ''')
         self.conn.commit()
 
-    def verifica_senha(self,nome,data_de_nascimento,senha):
-        with self.conn.cursor() as cursor:
-            cursor.execute('SELECT * FROM usuario WHERE nome = ?, data_de_nascimento = ? AND senha = ?', (nome,data_de_nascimento,senha))
-            user = cursor.fetchone()
-            return user is not None
-    
-    
+    def validar_usuario(self, nome, senha):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM usuario WHERE nome = %s AND senha = %s', (nome, senha))
+        user = cursor.fetchone()
+        cursor.close()
+        return user is not None
 
-    def cria_usuario(self,nome,data_de_nascimento,senha):
+    def adicionar_favorito(self, usuario_nome, jogo_nome):
         try:
-            self.cursor.execute('SELECT * FROM usuario WHERE nome = ?', (nome,))
-            if self.cursor.fetchone():
+            cursor = self.conn.cursor()
+            cursor.execute('SELECT * FROM favoritos WHERE usuario_nome = %s AND jogo_nome = %s', (usuario_nome, jogo_nome))
+            if cursor.fetchone():
+                cursor.close()
                 return False
-            
-            self.cursor.execute('INSERT INTO usuario (nome, data_de_nascimento, senha) VALUES (?, ?, ?)', (nome,data_de_nascimento,senha))
+
+            cursor.execute('INSERT INTO favoritos (usuario_nome, jogo_nome) VALUES (%s, %s)', (usuario_nome, jogo_nome))
             self.conn.commit()
+            cursor.close()
             return True
         except mariadb.Error as e:
-            print(f"Erro ao criar o usuário {e}. O usuário já existe!")
+            print(f"Erro ao adicionar favorito: {e}")
             return False
+
+    def obter_favoritos(self, usuario_nome):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT jogo_nome FROM favoritos WHERE usuario_nome = %s', (usuario_nome,))
+        favoritos = cursor.fetchall()
+        cursor.close()
+        return [fav[0] for fav in favoritos]
     
+    def remover_favorito(self, usuario, jogo):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("DELETE FROM favoritos WHERE usuario_nome = %s AND jogo_nome = %s", (usuario, jogo))
+            self.conn.commit()
+            rows_affected = cursor.rowcount
+            cursor.close()
+            return rows_affected > 0
+        except mariadb.Error as e:
+            print(f"Erro ao remover favorito: {e}")
+            return False
 
-    def deletar_usuario(self,id):
-        cursor = self.conn.cursor()
-        cursor.execute(f'''
-            delete from usuarios 
-            where id = ? 
-        ''',(id,))
-
-        self.conn.commit()
 
 
-    def atualiza_usuario(self,nome_novo,data_de_nascimento,senha,nome):
-        cursor = self.conn.cursor()
-        cursor.execute(f'''
-            update usuario
-            set nome = ?, data_de_nascimento = ? AND senha = ?
-            where nome = ?
-        ''',(nome_novo,data_de_nascimento,senha,nome))
-       
-        self.conn.commit()
-        
-    def selecionar_usuarios(self):
-        cursor = self.conn.cursor()
-        cursor.execute('SELECT * FROM usuario')
-        return cursor.fetchall()
 
     def fechar_conexao(self):
         self.conn.close()

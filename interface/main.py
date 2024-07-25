@@ -223,7 +223,9 @@ time_label = tk.Label(frame_principal, font=("Arial", 10), background="#cdcfb7")
 time_label.grid(row=0, column=4, padx=10, pady=10, sticky="e")
 time_label.bind("<Enter>", entrada_do_mouse)
 time_label.bind("<Leave>", saida_do_mouse)
+
 update_time()
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #Jogos em Destaque
