@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import Tk
-from PIL import Image, ImageTk
 from datetime import datetime
-
+from imagens import load_images
+from botoes_e_labels import cria_button_fav,entrada_do_mouse,saida_do_mouse,cria_button_download,cria_label_jogo,cria_label_subtitulo,cria_label_titulo
 root = tk.Tk()
 root.title("Aplicativo de Jogos")
 root.geometry("700x700")
@@ -12,56 +12,16 @@ favorito_window = None
 login_window = None
 info_window = None
 
-def load_images():
-    image1 = Image.open("mario.jpg").resize((120, 120))
-    photo1 = ImageTk.PhotoImage(image1)
+def update_time():
 
-    image2 = Image.open("kingdomrush.jpg").resize((120, 120))
-    photo2 = ImageTk.PhotoImage(image2)
+    now = datetime.now()
+    
+    current_time = now.strftime("%H:%M:%S")
+    current_date = now.strftime("%A, %d %B %Y")
 
-    image3 = Image.open("csgo.jpg").resize((120, 120))
-    photo3 = ImageTk.PhotoImage(image3)
-
-    image4 = Image.open("bloons.jpg").resize((120, 120))
-    photo4 = ImageTk.PhotoImage(image4)
-
-    image5 = Image.open("pacman.jpg").resize((120, 120))
-    photo5 = ImageTk.PhotoImage(image5)
-
-    image6 = Image.open("donkeykong.jpg").resize((120, 120))
-    photo6 = ImageTk.PhotoImage(image6)
-
-    image7 = Image.open("tetris.jpg").resize((120, 120))
-    photo7 = ImageTk.PhotoImage(image7)
-
-    image8 = Image.open("contra.jpg").resize((120, 120))
-    photo8 = ImageTk.PhotoImage(image8)
-
-    image9 = Image.open("sonic.jpg").resize((120, 120))
-    photo9 = ImageTk.PhotoImage(image9)
-
-    image10 = Image.open("metalslug3.jpg").resize((120, 120))
-    photo10 = ImageTk.PhotoImage(image10)
-
-    # Corrigir a atribuição das imagens FPS
-    image11 = Image.open("ark.jpg").resize((120, 120))
-    photo11 = ImageTk.PhotoImage(image11)
-
-    image12 = Image.open("apexlegends.jpg").resize((120, 120))
-    photo12 = ImageTk.PhotoImage(image12)
-
-    image13 = Image.open("dayz.jpg").resize((120, 120))
-    photo13 = ImageTk.PhotoImage(image13)
-
-    image14 = Image.open("teamfortress2.jpg").resize((120, 120))
-    photo14 = ImageTk.PhotoImage(image14)
-
-    image15 = Image.open("pubg.jpg").resize((120, 120))
-    photo15 = ImageTk.PhotoImage(image15)
-
-    return photo1, photo2, photo3, photo4, photo5, photo6, photo7, photo8, photo9, photo10, photo11, photo12, photo13, photo14, photo15
-
-image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14, image15 = load_images()
+    time_label.config(text=f"{current_date}\n{current_time}")
+    
+    root.after(1000, update_time)
 
 def abrir_janela_login():
     global login_window
@@ -192,8 +152,6 @@ def abrir_janela_info():
     info_frame.grid_rowconfigure(1, weight=1)
     info_frame.grid_columnconfigure(0, weight=1)
 
-
-
 def restart():
     root.destroy()
     root = tk.Tk()
@@ -213,34 +171,38 @@ def setup():
     """Configura a aplicação e os eventos."""
     root.bind("<F11>", tela_cheia)
     root.bind("<Escape>", desativ_tela_cheia)
+
+def menu():
+    menubar = tk.Menu(root)
+    root.config(menu=menubar)
+
+    menu = tk.Menu(menubar, tearoff=0)
+    menu.add_command(label="Tela", command=lambda: abrir_janela_info())
+
+    conta = tk.Menu(menubar, tearoff=0)
+
+    conta.add_command(label="Favoritos", command=lambda: abrir_janela_favoritos())
+    conta.add_command(label="Login", command=lambda: abrir_janela_login())
+
+    menu.add_command(label="Sair", command=root.destroy)
+    menubar.add_cascade(label="Configurações", menu=menu)
+    menubar.add_cascade(label="Conta", menu=conta)
+
+image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14, image15 = load_images()
 setup()
+menu()
 
-def entrada_do_mouse(event):
-    event.widget.config(bg='#d9f4ff')
+frame = tk.Frame(root, padx=10, pady=10)
+frame.pack(fill=tk.BOTH, expand=True)
 
-def saida_do_mouse(event):
-    event.widget.config(bg='#cdcfb7')
-    
-
-
-frame = tk.Frame(root)
-frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-# Cria o Frame secundário
 frame_secundario = tk.Frame(frame, background="#789048")
-frame_secundario.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+frame_secundario.grid(row=0, column=0, sticky="nsew")
 
-# Cria o Canvas dentro do frame_secundario
 canvas = tk.Canvas(frame_secundario, background="#607848")
 canvas.grid(row=0, column=0, sticky="nsew")
-
-# Configura o layout do grid interno para frame_secundario
 frame_secundario.grid_rowconfigure(0, weight=1)
 frame_secundario.grid_columnconfigure(0, weight=1)
 
-# Configura o layout do grid interno para o canvas
-canvas.grid_rowconfigure(0, weight=1)
-canvas.grid_columnconfigure(0, weight=1)
 # Scrolls
 scroll_x = tk.Scrollbar(frame, orient="horizontal", command=canvas.xview)
 scroll_x.grid(row=1, column=0, sticky="ew")
@@ -251,369 +213,114 @@ scroll_y.grid(row=0, column=1, sticky="ns")
 frame_principal = tk.Frame(canvas, background="#607848")
 frame_principal.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
-nome_app_label = tk.Label(frame_principal, text="Aplicativo de Jogos", font=("Arial Black", 16), background="#cdcfb7")
-nome_app_label.grid(row=0, column=0, columnspan=5, pady=(10, 5), sticky="n")
-
-nome_app_label.bind("<Enter>", entrada_do_mouse)
-nome_app_label.bind("<Leave>", saida_do_mouse)
-
-time_label = tk.Label(frame_principal, font=("Arial", 10), background="#cdcfb7")
-time_label.grid(row=0, column=4, padx=10, pady=10, sticky="e")
-
-
-time_label.bind("<Enter>", entrada_do_mouse)
-time_label.bind("<Leave>", saida_do_mouse)
-
-
-def update_time():
-
-    now = datetime.now()
-    
-    current_time = now.strftime("%H:%M:%S")
-    current_date = now.strftime("%A, %d %B %Y")
-
-    time_label.config(text=f"{current_date}\n{current_time}")
-    
-    root.after(1000, update_time)
-update_time()
-
 canvas.create_window((0, 0), window=frame_principal, anchor="nw")
 canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
-# Título de Jogos em Destaque
-label_titulo_destaques = tk.Label(frame_principal, text="Jogos em Destaque", background="#cdcfb7", font=("Arial Black", 9))
-label_titulo_destaques.grid(row=0, column=0, padx=5, pady=5, columnspan=5, sticky="nw")
+label_titulo1 = cria_label_titulo(frame_principal,"Aplicativo de Jogos",0,0,5)
 
+#Label Horário
+time_label = tk.Label(frame_principal, font=("Arial", 10), background="#cdcfb7")
+time_label.grid(row=0, column=4, padx=10, pady=10, sticky="e")
+time_label.bind("<Enter>", entrada_do_mouse)
+time_label.bind("<Leave>", saida_do_mouse)
+update_time()
 
-label_titulo_destaques.bind("<Enter>", entrada_do_mouse)
-label_titulo_destaques.bind("<Leave>", saida_do_mouse)
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+#Jogos em Destaque
+label_subtitulo_destaques = cria_label_subtitulo(frame_principal,"Jogos em Destaque",0,0,5,5)
 
-#menu
-menubar = tk.Menu(root)
-root.config(menu=menubar)
-
-menu = tk.Menu(menubar, tearoff=0)
-menu.add_command(label="Tela", command=lambda: abrir_janela_info())
-
-conta = tk.Menu(menubar, tearoff=0)
-
-conta.add_command(label="Favoritos", command=lambda: abrir_janela_favoritos())
-conta.add_command(label="Login", command=lambda: abrir_janela_login())
-
-menu.add_command(label="Sair", command=root.destroy)
-menubar.add_cascade(label="Configurações", menu=menu)
-menubar.add_cascade(label="Conta", menu=conta)
-
-# Frame para os jogos em destaque
 frame_destaques = tk.Frame(frame_principal, background="#789048")
 frame_destaques.grid(row=1, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
 
 # Super Mario Bros.
-label1 = tk.Label(frame_destaques, text="Super Mario World", image=image1, compound="top", font=("Arial", 10),background="#cdcfb7")
-label1.grid(row=0, column=0, padx=5, pady=5)
-
-label1.bind("<Enter>", entrada_do_mouse)
-label1.bind("<Leave>", saida_do_mouse)
-
-button_favoritos1 = tk.Button(frame_destaques, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos1.grid(row=1, column=0, padx=5, pady=5)
-
-button_favoritos1.bind("<Enter>", entrada_do_mouse)
-button_favoritos1.bind("<Leave>", saida_do_mouse)
-
-button_download1 = tk.Button(frame_destaques, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download1.grid(row=2, column=0, padx=5, pady=5)
-
-button_download1.bind("<Enter>", entrada_do_mouse)
-button_download1.bind("<Leave>", saida_do_mouse)
+label1 = cria_label_jogo(frame_destaques,"Super Mario World",image1,0,0,5,5)
+button_favoritos1 = cria_button_fav(frame_destaques,1,0,5,5)
+button_download1 = cria_button_download(frame_destaques,2,0,5,5)
 
 # Kingdom Rush
-label2 = tk.Label(frame_destaques, text="Kingdom Rush", image=image2, compound="top", font=("Arial", 10),background="#cdcfb7")
-label2.grid(row=0, column=1, padx=5, pady=5)
-
-label2.bind("<Enter>", entrada_do_mouse)
-label2.bind("<Leave>", saida_do_mouse)
-
-button_favoritos2 = tk.Button(frame_destaques, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos2.grid(row=1, column=1, padx=5, pady=5)
-
-button_favoritos2.bind("<Enter>", entrada_do_mouse)
-button_favoritos2.bind("<Leave>", saida_do_mouse)
-
-button_download2 = tk.Button(frame_destaques, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download2.grid(row=2, column=1, padx=5, pady=5)
-
-button_download2.bind("<Enter>", entrada_do_mouse)
-button_download2.bind("<Leave>", saida_do_mouse)
+label2 = cria_label_jogo(frame_destaques,"Kingdom Rush",image2,0,1,5,5)
+button_favoritos2 = cria_button_fav(frame_destaques,1,1,5,5)
+button_download2 = cria_button_download(frame_destaques,2,1,5,5)
 
 # CS:GO
-label3 = tk.Label(frame_destaques, text="CS:GO", image=image3, compound="top", font=("Arial", 10),background="#cdcfb7")
-label3.grid(row=0, column=2, padx=5, pady=5)
-
-label3.bind("<Enter>", entrada_do_mouse)
-label3.bind("<Leave>", saida_do_mouse)
-
-button_favoritos3 = tk.Button(frame_destaques, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos3.grid(row=1, column=2, padx=5, pady=5)
-
-button_favoritos3.bind("<Enter>", entrada_do_mouse)
-button_favoritos3.bind("<Leave>", saida_do_mouse)
-
-button_download3 = tk.Button(frame_destaques, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download3.grid(row=2, column=2, padx=5, pady=5)
-
-button_download3.bind("<Enter>", entrada_do_mouse)
-button_download3.bind("<Leave>", saida_do_mouse)
+label3 = cria_label_jogo(frame_destaques,"CS:GO",image3,0,2,5,5)
+button_favoritos3 = cria_button_fav(frame_destaques,1,2,5,5)
+button_download3 = cria_button_download(frame_destaques,2,2,5,5)
 
 # Bloons TD 6
-label4 = tk.Label(frame_destaques, text="Bloons TD 6", image=image4, compound="top", font=("Arial", 10),background="#cdcfb7")
-label4.grid(row=0, column=3, padx=5, pady=5)
-
-label4.bind("<Enter>", entrada_do_mouse)
-label4.bind("<Leave>", saida_do_mouse)
-
-button_favoritos4 = tk.Button(frame_destaques, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos4.grid(row=1, column=3, padx=5, pady=5)
-
-button_favoritos4.bind("<Enter>", entrada_do_mouse)
-button_favoritos4.bind("<Leave>", saida_do_mouse)
-
-button_download4 = tk.Button(frame_destaques, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download4.grid(row=2, column=3, padx=5, pady=5)
-
-button_download4.bind("<Enter>", entrada_do_mouse)
-button_download4.bind("<Leave>", saida_do_mouse)
+label4 = cria_label_jogo(frame_destaques,"Bloons TD 6",image4,0,3,5,5)
+button_favoritos4 = cria_button_fav(frame_destaques,1,3,5,5)
+button_download4 = cria_button_download(frame_destaques,2,3,5,5)
 
 # Metal Slug 3
-label10 = tk.Label(frame_destaques, text="Metal Slug 3", image=image10, compound="top", font=("Arial", 10),background="#cdcfb7")
-label10.grid(row=0, column=4, padx=5, pady=5)
+label10 = cria_label_jogo(frame_destaques,"Metal Slug 3",image10,0,4,5,5)
+button_favoritos10 = cria_button_fav(frame_destaques,1,4,5,5)
+button_download10 = cria_button_download(frame_destaques,2,4,5,5)
 
-label10.bind("<Enter>", entrada_do_mouse)
-label10.bind("<Leave>", saida_do_mouse)
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
-button_favoritos10 = tk.Button(frame_destaques, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos10.grid(row=1, column=4, padx=5, pady=5)
-
-button_favoritos10.bind("<Enter>", entrada_do_mouse)
-button_favoritos10.bind("<Leave>", saida_do_mouse)
-
-button_download10 = tk.Button(frame_destaques, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download10.grid(row=2, column=4, padx=5, pady=5)
-
-button_download10.bind("<Enter>", entrada_do_mouse)
-button_download10.bind("<Leave>", saida_do_mouse)
-
-# Título de Jogos Retrô
-label_titulo_plataforma = tk.Label(frame_principal, text="Jogos Retrô", compound="top", background="#cdcfb7", font=("Arial Black", 9))
-label_titulo_plataforma.grid(row=2, column=0, padx=5, pady=5, columnspan=5, sticky="nw")
-
-label_titulo_plataforma.bind("<Enter>", entrada_do_mouse)
-label_titulo_plataforma.bind("<Leave>", saida_do_mouse)
+#Jogos Retrô
+label_subtitulo_plataforma = cria_label_subtitulo(frame_principal,"Jogos Retrô",2,0,5,5)
 
 # Frame para os jogos retrô
 frame_plataforma = tk.Frame(frame_principal, background="#789048")
-frame_plataforma.grid(row=3, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
+frame_plataforma.grid(row=3, column=0,columnspan=5, padx=5, pady=5, sticky="nsew")
 
 # Pacman
-label5 = tk.Label(frame_plataforma, text="Pacman", image=image5, compound="top", font=("Arial", 10),background="#cdcfb7")
-label5.grid(row=0, column=0, padx=5, pady=5)
-
-label5.bind("<Enter>", entrada_do_mouse)
-label5.bind("<Leave>", saida_do_mouse)
-
-button_favoritos5 = tk.Button(frame_plataforma, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos5.grid(row=1, column=0, padx=5, pady=5)
-
-button_favoritos5.bind("<Enter>", entrada_do_mouse)
-button_favoritos5.bind("<Leave>", saida_do_mouse)
-
-button_download5 = tk.Button(frame_plataforma, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download5.grid(row=2, column=0, padx=5, pady=5)
-
-button_download5.bind("<Enter>", entrada_do_mouse)
-button_download5.bind("<Leave>", saida_do_mouse)
+label5 = cria_label_jogo(frame_plataforma,"Bloons TD 6",image5,0,0,5,5)
+button_favoritos5 = cria_button_fav(frame_plataforma,1,0,5,5)
+button_download5 = cria_button_download(frame_plataforma,2,0,5,5)
 
 # Donkey Kong
-label6 = tk.Label(frame_plataforma, text="Donkey Kong Country", image=image6, compound="top", font=("Arial", 9),background="#cdcfb7")
-label6.grid(row=0, column=1, padx=5, pady=5)
-
-label6.bind("<Enter>", entrada_do_mouse)
-label6.bind("<Leave>", saida_do_mouse)
-
-button_favoritos6 = tk.Button(frame_plataforma, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos6.grid(row=1, column=1, padx=5, pady=5)
-
-button_favoritos6.bind("<Enter>", entrada_do_mouse)
-button_favoritos6.bind("<Leave>", saida_do_mouse)
-
-button_download6 = tk.Button(frame_plataforma, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download6.grid(row=2, column=1, padx=5, pady=5)
-
-button_download6.bind("<Enter>", entrada_do_mouse)
-button_download6.bind("<Leave>", saida_do_mouse)
-
+label6 = cria_label_jogo(frame_plataforma, "Donkey Kong Country", image6, 0, 1, 5, 5)
+button_favoritos6 = cria_button_fav(frame_plataforma, 1, 1, 5, 5)
+button_download6 = cria_button_download(frame_plataforma, 2, 1, 5, 5)
 # Tetris
-label7 = tk.Label(frame_plataforma, text="Tetris", image=image7, compound="top", font=("Arial", 10),background="#cdcfb7")
-label7.grid(row=0, column=2, padx=5, pady=5)
-
-label7.bind("<Enter>", entrada_do_mouse)
-label7.bind("<Leave>", saida_do_mouse)
-
-button_favoritos7 = tk.Button(frame_plataforma, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos7.grid(row=1, column=2, padx=5, pady=5)
-
-button_favoritos7.bind("<Enter>", entrada_do_mouse)
-button_favoritos7.bind("<Leave>", saida_do_mouse)
-
-button_download7 = tk.Button(frame_plataforma, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download7.grid(row=2, column=2, padx=5, pady=5)
-
-button_download7.bind("<Enter>", entrada_do_mouse)
-button_download7.bind("<Leave>", saida_do_mouse)
+label7 = cria_label_jogo(frame_plataforma, "Tetris", image7, 0, 2, 5, 5)
+button_favoritos7 = cria_button_fav(frame_plataforma, 1, 2, 5, 5)
+button_download7 = cria_button_download(frame_plataforma, 2, 2, 5, 5)
 
 # Contra
-label8 = tk.Label(frame_plataforma, text="Contra", image=image8, compound="top", font=("Arial", 10),background="#cdcfb7")
-label8.grid(row=0, column=3, padx=5, pady=5)
-
-label8.bind("<Enter>", entrada_do_mouse)
-label8.bind("<Leave>", saida_do_mouse)
-
-button_favoritos8 = tk.Button(frame_plataforma, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos8.grid(row=1, column=3, padx=5, pady=5)
-
-button_favoritos8.bind("<Enter>", entrada_do_mouse)
-button_favoritos8.bind("<Leave>", saida_do_mouse)
-
-button_download8 = tk.Button(frame_plataforma, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download8.grid(row=2, column=3, padx=5, pady=5)
-
-button_download8.bind("<Enter>", entrada_do_mouse)
-button_download8.bind("<Leave>", saida_do_mouse)
+label8 = cria_label_jogo(frame_plataforma, "Contra", image8, 0, 3, 5, 5)
+button_favoritos8 = cria_button_fav(frame_plataforma, 1, 3, 5, 5)
+button_download8 = cria_button_download(frame_plataforma, 2, 3, 5, 5)
 
 # Sonic
-label9 = tk.Label(frame_plataforma, text="Sonic", image=image9, compound="top", font=("Arial", 10),background="#cdcfb7")
-label9.grid(row=0, column=4, padx=5, pady=5)
+label9 = cria_label_jogo(frame_plataforma, "Sonic", image9, 0, 4, 5, 5)
+button_favoritos9 = cria_button_fav(frame_plataforma, 1, 4, 5, 5)
+button_download9 = cria_button_download(frame_plataforma, 2, 4, 5, 5)
 
-label9.bind("<Enter>", entrada_do_mouse)
-label9.bind("<Leave>", saida_do_mouse)
-
-button_favoritos9 = tk.Button(frame_plataforma, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos9.grid(row=1, column=4, padx=5, pady=5)
-
-button_favoritos9.bind("<Enter>", entrada_do_mouse)
-button_favoritos9.bind("<Leave>", saida_do_mouse)
-
-button_download9 = tk.Button(frame_plataforma, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download9.grid(row=2, column=4, padx=5, pady=5)
-
-button_download9.bind("<Enter>", entrada_do_mouse)
-button_download9.bind("<Leave>", saida_do_mouse)
-
-# Título de Jogos FPS
-label_titulo_fps = tk.Label(frame_principal, text="Jogos FPS", compound="top", background="#cdcfb7", font=("Arial Black", 9))
-label_titulo_fps.grid(row=4, column=0, padx=5, pady=5, columnspan=5, sticky="nw")
-
-label_titulo_fps.bind("<Enter>", entrada_do_mouse)
-label_titulo_fps.bind("<Leave>", saida_do_mouse)
-
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------#
+#Jogos FPS
+label_subtitulo_pfps = cria_label_subtitulo(frame_principal,"Jogos FPS",4,0,5,5)
 # Frame para os jogos FPS
 frame_fps = tk.Frame(frame_principal, background="#789048")
 frame_fps.grid(row=5, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
 
 # ARK
-label11 = tk.Label(frame_fps, text="ARK: Survival Ascendent", image=image11, compound="top", font=("Arial", 9),background="#cdcfb7")
-label11.grid(row=0, column=0, padx=5, pady=5)
-
-label11.bind("<Enter>", entrada_do_mouse)
-label11.bind("<Leave>", saida_do_mouse)
-
-button_favoritos11 = tk.Button(frame_fps, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos11.grid(row=1, column=0, padx=5, pady=5)
-
-button_favoritos11.bind("<Enter>", entrada_do_mouse)
-button_favoritos11.bind("<Leave>", saida_do_mouse)
-
-button_download11 = tk.Button(frame_fps, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download11.grid(row=2, column=0, padx=5, pady=5)
-
-button_download11.bind("<Enter>", entrada_do_mouse)
-button_download11.bind("<Leave>", saida_do_mouse)
+label11 = cria_label_jogo(frame_fps, "ARK: Survival Ascendant", image11, 0, 0, 5, 5)
+button_favoritos11 = cria_button_fav(frame_fps, 1, 0, 5, 5)
+button_download11 = cria_button_download(frame_fps, 2, 0, 5, 5)
 
 # Apex Legends
-label12 = tk.Label(frame_fps, text="Apex Legends", image=image12, compound="top", font=("Arial", 10),background="#cdcfb7")
-label12.grid(row=0, column=1, padx=5, pady=5)
-
-label12.bind("<Enter>", entrada_do_mouse)
-label12.bind("<Leave>", saida_do_mouse)
-
-button_favoritos12 = tk.Button(frame_fps, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos12.grid(row=1, column=1, padx=5, pady=5)
-
-button_favoritos12.bind("<Enter>", entrada_do_mouse)
-button_favoritos12.bind("<Leave>", saida_do_mouse)
-
-button_download12 = tk.Button(frame_fps, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download12.grid(row=2, column=1, padx=5, pady=5)
-
-button_download12.bind("<Enter>", entrada_do_mouse)
-button_download12.bind("<Leave>", saida_do_mouse)
+label12 = cria_label_jogo(frame_fps, "Apex Legends", image12, 0, 1, 5, 5)
+button_favoritos12 = cria_button_fav(frame_fps, 1, 1, 5, 5)
+button_download12 = cria_button_download(frame_fps, 2, 1, 5, 5)
 
 # DayZ
-label13 = tk.Label(frame_fps, text="DayZ", image=image13, compound="top", font=("Arial", 10),background="#cdcfb7")
-label13.grid(row=0, column=2, padx=5, pady=5)
-
-label13.bind("<Enter>", entrada_do_mouse)
-label13.bind("<Leave>", saida_do_mouse)
-
-button_favoritos13 = tk.Button(frame_fps, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos13.grid(row=1, column=2, padx=5, pady=5)
-
-button_favoritos13.bind("<Enter>", entrada_do_mouse)
-button_favoritos13.bind("<Leave>", saida_do_mouse)
-
-button_download13 = tk.Button(frame_fps, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download13.grid(row=2, column=2, padx=5, pady=5)
-
-button_download13.bind("<Enter>", entrada_do_mouse)
-button_download13.bind("<Leave>", saida_do_mouse)
+label13 = cria_label_jogo(frame_fps, "DayZ", image13, 0, 2, 5, 5)
+button_favoritos13 = cria_button_fav(frame_fps, 1, 2, 5, 5)
+button_download13 = cria_button_download(frame_fps, 2, 2, 5, 5)
 
 # Team Fortress 2
-label14 = tk.Label(frame_fps, text="Team Fortress 2", image=image14, compound="top", font=("Arial", 10),background="#cdcfb7")
-label14.grid(row=0, column=3, padx=5, pady=5)
-
-label14.bind("<Enter>", entrada_do_mouse)
-label14.bind("<Leave>", saida_do_mouse)
-
-button_favoritos14 = tk.Button(frame_fps, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos14.grid(row=1, column=3, padx=5, pady=5)
-
-button_favoritos14.bind("<Enter>", entrada_do_mouse)
-button_favoritos14.bind("<Leave>", saida_do_mouse)
-
-button_download14 = tk.Button(frame_fps, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download14.grid(row=2, column=3, padx=5, pady=5)
-
-button_download14.bind("<Enter>", entrada_do_mouse)
-button_download14.bind("<Leave>", saida_do_mouse)
+label14 = cria_label_jogo(frame_fps, "Team Fortress 2", image14, 0, 3, 5, 5)
+button_favoritos14 = cria_button_fav(frame_fps, 1, 3, 5, 5)
+button_download14 = cria_button_download(frame_fps, 2, 3, 5, 5)
 
 # PUBG
-label15 = tk.Label(frame_fps, text="PUBG", image=image15, compound="top", font=("Arial", 10),background="#cdcfb7")
-label15.grid(row=0, column=4, padx=5, pady=5)
-
-label15.bind("<Enter>", entrada_do_mouse)
-label15.bind("<Leave>", saida_do_mouse)
-
-button_favoritos15 = tk.Button(frame_fps, text="Adicionar aos Favoritos", font=("Arial", 7),background="#cdcfb7")
-button_favoritos15.grid(row=1, column=4, padx=5, pady=5)
-
-button_favoritos15.bind("<Enter>", entrada_do_mouse)
-button_favoritos15.bind("<Leave>", saida_do_mouse)
-
-button_download15 = tk.Button(frame_fps, text="Download", font=("Arial", 7),background="#cdcfb7")
-button_download15.grid(row=2, column=4, padx=5, pady=5)
-
-button_download15.bind("<Enter>", entrada_do_mouse)
-button_download15.bind("<Leave>", saida_do_mouse)
+label15 = cria_label_jogo(frame_fps, "PUBG", image15, 0, 4, 5, 5)
+button_favoritos15 = cria_button_fav(frame_fps, 1, 4, 5, 5)
+button_download15 = cria_button_download(frame_fps, 2, 4, 5, 5)
 
 def configurar_grid(frame, rows, columns):
     # Configura as linhas do grid
@@ -624,16 +331,12 @@ def configurar_grid(frame, rows, columns):
     for j in range(columns):
         frame.grid_columnconfigure(j, weight=1)
 
-# Exemplo de uso para os frames específicos mencionados
 configurar_grid(frame_destaques, 3, 5)
 configurar_grid(frame_plataforma, 3, 5)
 configurar_grid(frame_fps, 3, 5)
 configurar_grid(frame_principal, 6, 5)
-
-# Ajusta as proporções do Canvas e do Frame
 frame.grid_rowconfigure(0, weight=1)
 frame.grid_columnconfigure(0, weight=1)
 
-# Executa o loop principal do tkinter
 if __name__ == "__main__":
     root.mainloop()
