@@ -23,7 +23,6 @@ class UsuarioModel:
             CREATE TABLE IF NOT EXISTS usuario (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 nome VARCHAR(100) UNIQUE,
-                data_de_nascimento VARCHAR(50),
                 senha VARCHAR(100)
             )
         ''')
@@ -37,22 +36,45 @@ class UsuarioModel:
         ''')
         self.conn.commit()
 
+    def criar_usuario(self, nome, senha):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(
+                'INSERT INTO usuario (nome, senha) VALUES (%s, %s)', 
+                (nome, senha)
+            )
+            self.conn.commit()
+            cursor.close()
+            return True
+        except mariadb.Error as e:
+            print(f"Erro ao criar usuário: {e}")
+            return False
+
     def validar_usuario(self, nome, senha):
         cursor = self.conn.cursor()
-        cursor.execute('SELECT * FROM usuario WHERE nome = %s AND senha = %s', (nome, senha))
+        cursor.execute('SELECT senha FROM usuario WHERE nome = %s', (nome,))
         user = cursor.fetchone()
         cursor.close()
-        return user is not None
+        if user:
+            stored_password = user[0]
+            return senha == stored_password
+        return False
 
     def adicionar_favorito(self, usuario_nome, jogo_nome):
         try:
             cursor = self.conn.cursor()
-            cursor.execute('SELECT * FROM favoritos WHERE usuario_nome = %s AND jogo_nome = %s', (usuario_nome, jogo_nome))
+            cursor.execute(
+                'SELECT * FROM favoritos WHERE usuario_nome = %s AND jogo_nome = %s', 
+                (usuario_nome, jogo_nome)
+            )
             if cursor.fetchone():
                 cursor.close()
                 return False
 
-            cursor.execute('INSERT INTO favoritos (usuario_nome, jogo_nome) VALUES (%s, %s)', (usuario_nome, jogo_nome))
+            cursor.execute(
+                'INSERT INTO favoritos (usuario_nome, jogo_nome) VALUES (%s, %s)', 
+                (usuario_nome, jogo_nome)
+            )
             self.conn.commit()
             cursor.close()
             return True
@@ -62,7 +84,10 @@ class UsuarioModel:
 
     def obter_favoritos(self, usuario_nome):
         cursor = self.conn.cursor()
-        cursor.execute('SELECT jogo_nome FROM favoritos WHERE usuario_nome = %s', (usuario_nome,))
+        cursor.execute(
+            'SELECT jogo_nome FROM favoritos WHERE usuario_nome = %s', 
+            (usuario_nome,)
+        )
         favoritos = cursor.fetchall()
         cursor.close()
         return [fav[0] for fav in favoritos]
@@ -70,7 +95,10 @@ class UsuarioModel:
     def remover_favorito(self, usuario, jogo):
         try:
             cursor = self.conn.cursor()
-            cursor.execute("DELETE FROM favoritos WHERE usuario_nome = %s AND jogo_nome = %s", (usuario, jogo))
+            cursor.execute(
+                "DELETE FROM favoritos WHERE usuario_nome = %s AND jogo_nome = %s", 
+                (usuario, jogo)
+            )
             self.conn.commit()
             rows_affected = cursor.rowcount
             cursor.close()
@@ -78,9 +106,6 @@ class UsuarioModel:
         except mariadb.Error as e:
             print(f"Erro ao remover favorito: {e}")
             return False
-
-
-
 
     def fechar_conexao(self):
         self.conn.close()
