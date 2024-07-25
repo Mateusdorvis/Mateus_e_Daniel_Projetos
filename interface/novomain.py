@@ -23,6 +23,8 @@ class App:
         self.cadastro_window = None  # Adiciona a variável para a janela de cadastro
         self.usuario_logado = None
 
+        self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
+
     def setup(self):
         self.root.bind("<F11>", self.tela_cheia)
         self.root.bind("<Escape>", self.desativ_tela_cheia)
@@ -205,83 +207,80 @@ class App:
             messagebox.showwarning("Erro", "Nenhum usuário logado.")
             return
 
-        if self.favorito_window and self.favorito_window.winfo_exists():
+        # Verifique se a janela já existe e está aberta
+        if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             self.favorito_window.lift()
             self.favorito_window.focus()
             return
-        
-        # Cria a janela 'favorito_window' se não existir
+
+        # Crie a janela `Toplevel`
         self.favorito_window = tk.Toplevel(self.root)
         self.favorito_window.title("Favoritos")
         self.favorito_window.geometry("300x400")
         self.favorito_window.resizable(False, False)
 
-        # Frame principal da janela de favoritos
         frame_favorito = tk.Frame(self.favorito_window, background="#789048")
         frame_favorito.pack(fill="both", expand=True)
 
-        # Rótulo para a lista de favoritos
         favorito_label = tk.Label(frame_favorito, text="Meus Favoritos", font=("Arial", 12), background="#cdcfb7")
         favorito_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
 
-        # Frame para a Listbox e o botão
         frame_lista_botao = tk.Frame(frame_favorito, background="#607848")
         frame_lista_botao.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-        # Listbox para mostrar os favoritos
+        # Crie a listbox como um atributo do objeto principal
         self.listbox_favoritos = tk.Listbox(frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
         self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        # Botão para remover favoritos
         self.botao_remover_favorito = tk.Button(frame_lista_botao, text="Remover Favorito", command=self.remover_favorito)
         self.botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
 
-        # Configura o layout para que o frame e a listbox se expandam conforme necessário
         frame_favorito.grid_rowconfigure(1, weight=1)
         frame_favorito.grid_columnconfigure(0, weight=1)
         frame_lista_botao.grid_rowconfigure(0, weight=1)
         frame_lista_botao.grid_columnconfigure(0, weight=1)
 
-        # Carregar favoritos do banco de dados
         self.atualizar_favoritos()
 
-        # Configura o protocolo de fechamento da janela
         self.favorito_window.protocol("WM_DELETE_WINDOW", self.fechar_janela_favoritos)
+
+
+
+
 
     def remover_favorito(self):
         if not self.usuario_logado:
             messagebox.showwarning("Erro", "Nenhum usuário logado.")
             return
 
-        # Verifica se a janela e a Listbox existem
-        if not self.favorito_window or not hasattr(self.favorito_window, 'listbox_favoritos'):
-            messagebox.showwarning("Erro", "A janela de favoritos não está aberta ou não contém a Listbox.")
+        if not hasattr(self, 'listbox_favoritos') or not self.listbox_favoritos.winfo_exists():
+            messagebox.showwarning("Erro", "A Listbox de favoritos não está disponível.")
             return
 
-        selecionado = self.favorito_window.listbox_favoritos.curselection()
-        
+        selecionado = self.listbox_favoritos.curselection()
         if not selecionado:
-            messagebox.showwarning("Erro", "Nenhum jogo selecionado para remover.")
+            messagebox.showwarning("Erro", "Nenhum item selecionado.")
             return
 
-        jogo = self.favorito_window.listbox_favoritos.get(selecionado)
-        print(f"Removendo o jogo: {jogo}")  # Log de depuração
-
-        if self.usuario_model.remover_favorito(self.usuario_logado, jogo):
-            messagebox.showinfo("Remover Favorito", f"{jogo} removido dos favoritos.")
-            self.atualizar_favoritos()
+        index = selecionado[0]
+        item = self.listbox_favoritos.get(index)
+        if self.usuario_model.remover_favorito(self.usuario_logado, item):
+            messagebox.showinfo("Remover Favorito", f"{item} removido dos favoritos.")
+            self.atualizar_favoritos()  # Atualiza a lista de favoritos após a remoção
         else:
             messagebox.showerror("Erro", "Erro ao remover o jogo dos favoritos.")
 
 
 
 
+
     def atualizar_favoritos(self):
-        if self.favorito_window and self.usuario_logado:
-            self.favorito_window.listbox_favoritos.delete(0, tk.END)  # Limpa a lista existente
-            favoritos = self.usuario_model.obter_favoritos(self.usuario_logado)
-            for fav in favoritos:
-                self.favorito_window.listbox_favoritos.insert(tk.END, fav)
+        if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
+            if hasattr(self, 'listbox_favoritos') and self.listbox_favoritos.winfo_exists():
+                self.listbox_favoritos.delete(0, tk.END)  # Limpa a lista existente
+                favoritos = self.usuario_model.obter_favoritos(self.usuario_logado)
+                for fav in favoritos:
+                    self.listbox_favoritos.insert(tk.END, fav)
 
     def fechar_janela_favoritos(self):
         if self.favorito_window:
@@ -405,12 +404,12 @@ class App:
             messagebox.showwarning("Erro", "Nenhum usuário logado.")
             return
 
-        selecionado = self.favorito_window.listbox_favoritos.curselection()
+        selecionado = self.listbox_favoritos.curselection()
         if not selecionado:
             messagebox.showwarning("Erro", "Nenhum jogo selecionado para remover.")
             return
 
-        jogo = self.favorito_window.listbox_favoritos.get(selecionado)
+        jogo = self.istbox_favoritos.get(selecionado)
         if self.usuario_model.remover_favorito(self.usuario_logado, jogo):
             messagebox.showinfo("Remover Favorito", f"{jogo} removido dos favoritos.")
             self.atualizar_favoritos()  # Atualiza a lista de favoritos após a remoção
@@ -446,8 +445,11 @@ class App:
         self.root.attributes("-fullscreen", False)
 
     def fechar_app(self):
-        self.usuario_model.fechar_conexao()  # Fecha a conexão com o banco de dados
-        self.root.destroy()
+        resposta = messagebox.askyesno("Confirmar Saída", "Você realmente deseja sair?")
+        if resposta:
+            self.usuario_model.fechar_conexao()
+            self.root.destroy()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
