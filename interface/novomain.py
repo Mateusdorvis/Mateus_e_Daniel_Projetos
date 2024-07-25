@@ -205,29 +205,48 @@ class App:
             messagebox.showwarning("Erro", "Nenhum usuário logado.")
             return
 
-        if self.favorito_window:
+        if self.favorito_window and self.favorito_window.winfo_exists():
             self.favorito_window.lift()
-        else:
-            self.favorito_window = tk.Toplevel(self.root)
-            self.favorito_window.title("Favoritos")
-            self.favorito_window.geometry("300x400")
-            self.favorito_window.resizable(False, False)
-            
-            tk.Label(self.favorito_window, text="Meus Favoritos", font=("Arial", 12)).pack(pady=10)
-            
-            # Cria a Listbox dentro da janela de favoritos
-            self.favorito_window.listbox_favoritos = tk.Listbox(self.favorito_window, selectmode=tk.SINGLE)
-            self.favorito_window.listbox_favoritos.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-            
-            # Cria o botão para remover favoritos
-            self.botao_remover_favorito = tk.Button(self.favorito_window, text="Remover Favorito", command=self.remover_favorito)
-            self.botao_remover_favorito.pack(pady=10)
-            
-            # Carregar favoritos do banco de dados
-            self.atualizar_favoritos()
-            
-            # Configura o protocolo de fechamento da janela
-            self.favorito_window.protocol("WM_DELETE_WINDOW", self.fechar_janela_favoritos)
+            self.favorito_window.focus()
+            return
+        
+        # Cria a janela 'favorito_window' se não existir
+        self.favorito_window = tk.Toplevel(self.root)
+        self.favorito_window.title("Favoritos")
+        self.favorito_window.geometry("300x400")
+        self.favorito_window.resizable(False, False)
+
+        # Frame principal da janela de favoritos
+        frame_favorito = tk.Frame(self.favorito_window, background="#789048")
+        frame_favorito.pack(fill="both", expand=True)
+
+        # Rótulo para a lista de favoritos
+        favorito_label = tk.Label(frame_favorito, text="Meus Favoritos", font=("Arial", 12), background="#cdcfb7")
+        favorito_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
+
+        # Frame para a Listbox e o botão
+        frame_lista_botao = tk.Frame(frame_favorito, background="#607848")
+        frame_lista_botao.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+
+        # Listbox para mostrar os favoritos
+        self.listbox_favoritos = tk.Listbox(frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
+        self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        # Botão para remover favoritos
+        self.botao_remover_favorito = tk.Button(frame_lista_botao, text="Remover Favorito", command=self.remover_favorito)
+        self.botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
+
+        # Configura o layout para que o frame e a listbox se expandam conforme necessário
+        frame_favorito.grid_rowconfigure(1, weight=1)
+        frame_favorito.grid_columnconfigure(0, weight=1)
+        frame_lista_botao.grid_rowconfigure(0, weight=1)
+        frame_lista_botao.grid_columnconfigure(0, weight=1)
+
+        # Carregar favoritos do banco de dados
+        self.atualizar_favoritos()
+
+        # Configura o protocolo de fechamento da janela
+        self.favorito_window.protocol("WM_DELETE_WINDOW", self.fechar_janela_favoritos)
 
     def remover_favorito(self):
         if not self.usuario_logado:
