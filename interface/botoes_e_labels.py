@@ -1,14 +1,7 @@
 import tkinter as tk
-
+from tkinter import messagebox
 # Funções de botão
-def cria_button_download(parent, row, column, padx, pady):
-    # Define a cor de fundo para o botão de download
-    button_download = tk.Button(parent, text="Download", font=("Arial", 7), background="#cdcfb7")
-    button_download.grid(row=row, column=column, padx=padx, pady=pady)
-    button_download.bind("<Enter>", entrada_do_mouse)
-    button_download.bind("<Leave>", saida_do_mouse)
 
-# Funções de label
 def cria_label_jogo(parent, text, image, row, column, padx, pady):
     # Define a cor de fundo igual ao botão de download
     label = tk.Button(parent, text=text, image=image, compound="top", font=("Arial", 10), background="#cdcfb7")
