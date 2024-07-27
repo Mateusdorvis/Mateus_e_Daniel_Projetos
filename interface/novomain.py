@@ -10,7 +10,7 @@ class App:
         self.root = root
         self.root.title("Aplicativo de Jogos")
         self.root.geometry("700x700")
-        self.root.resizable(True, True)  # Permitir redimensionamento
+        self.root.resizable(False, False)  # Permitir redimensionamento
         self.usuario_model = UsuarioModel()  # Instancia o modelo
         self.setup()
         self.create_widgets()
@@ -163,8 +163,8 @@ class App:
 
 
         # ARK
-        label11 = cria_label_jogo(frame_fps, "ARK: Survival Ascendant", self.images[10], 0, 0, 5, 5)
-        self.criar_button_favoritos(frame_fps,"ARK: Survival Ascendant", 1, 0)
+        label11 = cria_label_jogo(frame_fps, "ARK: Survival Ascended", self.images[10], 0, 0, 5, 5)
+        self.criar_button_favoritos(frame_fps,"ARK: Survival Ascended", 1, 0)
         button_download11 = self.cria_button_download(frame_fps, 2, 0, 5, 5)
 
         # Apex Legends
@@ -188,7 +188,7 @@ class App:
         button_download15 = self.cria_button_download(frame_fps, 2, 4, 5, 5)
 
     def criar_button_favoritos(self,parent_frame, jogo, row, column):
-        button = tk.Button(parent_frame, text="Favoritar",background="#cdcfb7", command=lambda: self.adicionar_favorito(jogo))
+        button = tk.Button(parent_frame, text="Favoritar",font=("Arial",9), background="#cdcfb7", command=lambda: self.adicionar_favorito(jogo))
         button.grid(row=row, column=column, padx=5, pady=5)
         button.bind("<Enter>", entrada_do_mouse)
         button.bind("<Leave>", saida_do_mouse)
@@ -460,7 +460,7 @@ class App:
 
     def cria_button_download(self, parent_frame, row, column, padx, pady):
             # Cria o botão com texto "Baixar"
-            button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 10), command=lambda: self.iniciar_download(button))
+            button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda: self.iniciar_download(button))
             button.grid(row=row, column=column, padx=padx, pady=pady)
             button.bind("<Enter>", entrada_do_mouse)
             button.bind("<Leave>", saida_do_mouse)
