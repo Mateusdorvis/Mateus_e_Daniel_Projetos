@@ -9,7 +9,7 @@ def criar_button(parent_frame,text, row, column,command):
 
 def cria_label_jogo(parent, text, image, row, column, padx, pady):
     # Define a cor de fundo igual ao botão de download
-    label = tk.Button(parent, text=text, image=image, compound="top", font=("Arial", 10), background="#cdcfb7")
+    label = tk.Button(parent, text=text, image=image, compound="top", font=("Arial", 8), background="#cdcfb7")
     label.grid(row=row, column=column, padx=padx, pady=pady)
     label.bind("<Enter>", entrada_do_mouse)
     label.bind("<Leave>", saida_do_mouse)
