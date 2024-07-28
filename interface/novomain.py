@@ -10,17 +10,16 @@ class App:
         self.root = root
         self.root.title("Aplicativo de Jogos")
         self.root.geometry("700x700")
-        self.root.resizable(False, False)  # Permitir redimensionamento
-        self.usuario_model = UsuarioModel()  # Instancia o modelo
+        self.root.resizable(False, False)
+        self.usuario_model = UsuarioModel()
         self.setup()
         self.create_widgets()
         self.create_menu()
 
-        # Inicializa variáveis de janela e usuário
         self.login_window = None
         self.favorito_window = None
         self.info_window = None
-        self.cadastro_window = None  # Adiciona a variável para a janela de cadastro
+        self.cadastro_window = None
         self.usuario_logado = None
 
         self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
@@ -51,29 +50,24 @@ class App:
         frame = tk.Frame(self.root, padx=10, pady=10)
         frame.pack(fill=tk.BOTH, expand=True)
 
-        # Configura o Canvas e as barras de rolagem
         self.canvas = tk.Canvas(frame, background="#607848")
         self.scroll_x = tk.Scrollbar(frame, orient="horizontal", command=self.canvas.xview)
         self.scroll_y = tk.Scrollbar(frame, orient="vertical", command=self.canvas.yview)
 
         self.canvas.configure(xscrollcommand=self.scroll_x.set, yscrollcommand=self.scroll_y.set)
 
-        # Configura a posição do Canvas e das barras de rolagem
         self.canvas.grid(row=0, column=0, sticky="nsew")
         self.scroll_x.grid(row=1, column=0, sticky="ew")
         self.scroll_y.grid(row=0, column=1, sticky="ns")
 
-        # Cria um frame dentro do canvas para acomodar o conteúdo
         self.frame_principal = tk.Frame(self.canvas, background="#607848")
         self.canvas.create_window((0, 0), window=self.frame_principal, anchor="nw")
 
-        # Atualiza a região de rolagem quando o frame principal é redimensionado
         self.frame_principal.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
         self.create_header()
         self.create_game_sections()
 
-        # Configura a expansão do grid
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
 
@@ -205,6 +199,7 @@ class App:
         else:
             messagebox.showinfo("Favorito", "O jogo já está na lista de favoritos.")
     def abrir_janela_favoritos(self):
+        self.info_window.destroy()
         if not self.usuario_logado:
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
@@ -229,7 +224,6 @@ class App:
         frame_lista_botao = tk.Frame(frame_favorito, background="#607848")
         frame_lista_botao.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-        # Crie a listbox como um atributo do objeto principal
         self.listbox_favoritos = tk.Listbox(frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
         self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
@@ -244,10 +238,6 @@ class App:
         self.atualizar_favoritos()
 
         self.favorito_window.protocol("WM_DELETE_WINDOW", self.fechar_janela_favoritos)
-
-
-
-
 
     def remover_favorito(self):
         if not self.usuario_logado:
@@ -271,10 +261,6 @@ class App:
         else:
             messagebox.showerror("Erro", "Erro ao remover o jogo dos favoritos.")
 
-
-
-
-
     def atualizar_favoritos(self):
         if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             if hasattr(self, 'listbox_favoritos') and self.listbox_favoritos.winfo_exists():
@@ -289,13 +275,12 @@ class App:
             self.favorito_window = None
 
     def abrir_janela_info(self):
-        # Verifica se a janela 'info_window' existe e está visível
+        self.favorito_window.destroy()
         if self.info_window and self.info_window.winfo_exists():
             self.info_window.lift()
             self.info_window.focus()
             return
 
-        # Cria a janela 'info_window' se não existir
         self.info_window = tk.Toplevel(root)
         self.info_window.title("Info")
         self.info_window.geometry("300x300")
@@ -325,7 +310,6 @@ class App:
             self.info_window = None
 
     def abrir_janela_login(self):
-        # Verifica se um usuário já está logado
         if self.usuario_logado:
             messagebox.showinfo("Já Logado", "O Login já foi realizado.")
             return
@@ -392,17 +376,14 @@ class App:
             frame_cadastro = tk.Frame(self.cadastro_window, background="#789048")
             frame_cadastro.pack(fill='both', expand=True)
 
-            # Configura o grid para expandir corretamente
             for i in range(4):
-                frame_cadastro.grid_rowconfigure(i, weight=0)  # Configura todas as linhas com weight=0
+                frame_cadastro.grid_rowconfigure(i, weight=0)
 
             for i in range(2):
-                frame_cadastro.grid_columnconfigure(i, weight=1)  # Configura todas as colunas com weight=1
+                frame_cadastro.grid_columnconfigure(i, weight=1)
 
-            # Label do título
             cadastro_titulo = cria_label_titulo(frame_cadastro,"Cadastro",0,0,2)
 
-            # Labels e entradas
             label_novo_nome = cria_label(frame_cadastro, "Novo usuário:", 1, 0, 10, 5, "w")
 
             self.entrada_usuario_cadastro = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
@@ -417,9 +398,6 @@ class App:
             self.cadastro_window.protocol("WM_DELETE_WINDOW", self.fechar_janela_cadastro)
         else:
             self.cadastro_window.lift()
-
-
-
 
     def cadastrar_usuario(self):
         usuario = self.entrada_usuario_cadastro.get()
@@ -440,8 +418,6 @@ class App:
             self.cadastro_window.destroy()
             self.cadastro_window = None
 
-
-
     def remover_favorito(self):
         if not self.usuario_logado:
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
@@ -455,37 +431,32 @@ class App:
         jogo = self.listbox_favoritos.get(selecionado)
         if self.usuario_model.remover_favorito(self.usuario_logado, jogo):
             messagebox.showinfo("Remover Favorito", f"{jogo} removido dos favoritos.")
-            self.atualizar_favoritos()  # Atualiza a lista de favoritos após a remoção
+            self.atualizar_favoritos()
         else:
             messagebox.showerror("Erro", "Erro ao remover o jogo dos favoritos.")
 
     def cria_button_download(self, parent_frame, row, column, padx, pady):
-            # Cria o botão com texto "Baixar"
+
             button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda: self.iniciar_download(button))
             button.grid(row=row, column=column, padx=padx, pady=pady)
             button.bind("<Enter>", entrada_do_mouse)
             button.bind("<Leave>", saida_do_mouse)
             return button
 
-
     def iniciar_download(self, button):
         if self.usuario_logado:
-            # Altera o texto do botão para "Baixando..." e desativa o botão
             button.config(text="Baixando...", state="disabled")
-            
-            # Simula o processo de download com um atraso
+
             button.after(3000, lambda: self.download_concluido(button))
         else:
             messagebox.showwarning("Erro", "Você precisa fazer o Login primeiro.")
 
     def download_concluido(self, button):
         messagebox.showinfo("Informação", "O download foi concluído.")
-        # Atualiza o texto do botão para "Download Completo" e reativa-o
         button.config(text="Download Completo", state="normal")
         button.config(command=lambda: self.mensagem_download_completo(button))
 
     def mensagem_download_completo(self, button):
-        # Emite uma mensagem quando o botão é clicado e o texto é "Download Completo"
         messagebox.showinfo("Informação", "O download já foi feito.")
 
     def login(self):
@@ -494,7 +465,7 @@ class App:
 
         if self.usuario_model.validar_usuario(usuario, senha):
             messagebox.showinfo("Login", "Login realizado com sucesso!")
-            self.usuario_logado = usuario  # Armazena o usuário logado
+            self.usuario_logado = usuario
             self.fechar_janela_login()
         else:
             messagebox.showerror("Erro", "Usuário ou senha inválidos.")
@@ -506,8 +477,7 @@ class App:
         if self.login_window:
             self.login_window.destroy()
             self.login_window = None
-
-
+            
     def tela_cheia(self, event=None):
         self.root.attributes("-fullscreen", True)
 
