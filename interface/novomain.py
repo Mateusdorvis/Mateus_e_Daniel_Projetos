@@ -382,6 +382,7 @@ class App:
             self.login_window.lift()
 
     def abrir_janela_cadastro(self):
+        self.login_window.destroy()
         if not self.cadastro_window:
             self.cadastro_window = tk.Toplevel(self.root)
             self.cadastro_window.title("Cadastro")
